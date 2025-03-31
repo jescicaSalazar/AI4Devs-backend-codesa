@@ -49,3 +49,6 @@ Adicionalo al controller de candidatos y su respectivo service
 
 # Prompt 4:
 Valida el flujo del nuevo servicio /candidates/:id/stage, ya que genera error 
+
+# Prompt 5:
+Docuemnta el código
