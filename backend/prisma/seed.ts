@@ -3,333 +3,152 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create Companies
-  const company1 = await prisma.company.create({
+  // Crear una compañía
+  const company = await prisma.company.create({
     data: {
-      name: 'LTI',
+      name: 'Tech Solutions Inc.',
     },
   });
 
-  // Create Interview Flows
-  const interviewFlow1 = await prisma.interviewFlow.create({
+  // Crear un empleado
+  const employee = await prisma.employee.create({
     data: {
-      description: 'Standard development interview process',
+      companyId: company.id,
+      name: 'Ana Martínez',
+      email: 'ana.martinez@techsolutions.com',
+      role: 'Entrevistador Senior',
+      isActive: true,
     },
   });
 
-  const interviewFlow2 = await prisma.interviewFlow.create({
+  // Crear un flujo de entrevista
+  const interviewFlow = await prisma.interviewFlow.create({
     data: {
-      description: 'Data science interview process',
+      description: 'Proceso de selección estándar',
     },
   });
 
-  // Create Positions
-  const position1 = await prisma.position.create({
+  // Crear tipos de entrevista
+  const technicalInterview = await prisma.interviewType.create({
     data: {
-      title: 'Software Engineer',
-      description: 'Develop and maintain software applications.',
-      status: 'Open',
+      name: 'Entrevista Técnica',
+      description: 'Evaluación de habilidades técnicas',
+    },
+  });
+
+  const hrInterview = await prisma.interviewType.create({
+    data: {
+      name: 'Entrevista RRHH',
+      description: 'Evaluación de habilidades blandas',
+    },
+  });
+
+  // Crear pasos de entrevista
+  const technicalStep = await prisma.interviewStep.create({
+    data: {
+      interviewFlowId: interviewFlow.id,
+      interviewTypeId: technicalInterview.id,
+      name: 'Entrevista Técnica',
+      orderIndex: 1,
+    },
+  });
+
+  const hrStep = await prisma.interviewStep.create({
+    data: {
+      interviewFlowId: interviewFlow.id,
+      interviewTypeId: hrInterview.id,
+      name: 'Entrevista RRHH',
+      orderIndex: 2,
+    },
+  });
+
+  // Crear una posición
+  const position = await prisma.position.create({
+    data: {
+      companyId: company.id,
+      interviewFlowId: interviewFlow.id,
+      title: 'Desarrollador Full Stack Senior',
+      description: 'Buscamos un desarrollador full stack con experiencia en Node.js y React',
+      status: 'Active',
       isVisible: true,
-      location: 'Remote',
-      jobDescription: 'Full-stack development',
-      companyId: company1.id,
-      interviewFlowId: interviewFlow1.id,
+      location: 'Remoto',
+      jobDescription: 'Descripción detallada del puesto',
+      requirements: 'Requisitos del puesto',
+      responsibilities: 'Responsabilidades del puesto',
       salaryMin: 50000,
       salaryMax: 80000,
       employmentType: 'Full-time',
-      benefits: 'Health insurance, 401k, Paid time off',
-      contactInfo: 'hr@lti.com',
-      requirements: '3+ years of experience in software development, knowledge in React and Node.js',
-      responsibilities: 'Develop, test, and maintain software solutions.',
-      companyDescription: 'LTI is a leading HR solutions provider.',
-      applicationDeadline: new Date('2024-12-31')
     },
   });
 
-  const position2 = await prisma.position.create({
-    data: {
-      title: 'Data Scientist',
-      description: 'Analyze and interpret complex data.',
-      status: 'Open',
-      isVisible: true,
-      location: 'Remote',
-      jobDescription: 'Data analysis and machine learning',
-      companyId: company1.id,
-      interviewFlowId: interviewFlow2.id,
-      salaryMin: 60000,
-      salaryMax: 90000,
-      employmentType: 'Full-time',
-      benefits: 'Health insurance, 401k, Paid time off, Stock options',
-      contactInfo: 'hr@lti.com',
-      requirements: 'Master degree in Data Science or related field, proficiency in Python and R',
-      responsibilities: 'Analyze data sets to derive business insights and develop predictive models.',
-      companyDescription: 'LTI is a leading HR solutions provider.',
-      applicationDeadline: new Date('2024-12-31')
-    },
-  });
-
-  // Create Candidates
+  // Crear candidatos
   const candidate1 = await prisma.candidate.create({
     data: {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@gmail.com',
+      firstName: 'Juan',
+      lastName: 'Pérez',
+      email: 'juan.perez@email.com',
       phone: '1234567890',
-      address: '123 Main St',
-      educations: {
-        create: [
-          {
-            institution: 'University A',
-            title: 'BSc Computer Science',
-            startDate: new Date('2015-09-01'),
-            endDate: new Date('2019-06-01'),
-          },
-        ],
-      },
-      workExperiences: {
-        create: [
-          {
-            company: 'Eventbrite',
-            position: 'Software Developer',
-            description: 'Developed web applications',
-            startDate: new Date('2019-07-01'),
-            endDate: new Date('2021-08-01'),
-          },
-        ],
-      },
-      resumes: {
-        create: [
-          {
-            filePath: '/resumes/john_doe.pdf',
-            fileType: 'application/pdf',
-            uploadDate: new Date(),
-          },
-        ],
-      },
+      address: 'Calle Principal 123',
     },
   });
 
   const candidate2 = await prisma.candidate.create({
     data: {
-      firstName: 'Jane',
-      lastName: 'Smith',
-      email: 'jane.smith@gmail.com',
-      phone: '0987654321',
-      address: '456 Elm St',
-      educations: {
-        create: [
-          {
-            institution: 'Maryland',
-            title: 'MSc Data Science',
-            startDate: new Date('2016-09-01'),
-            endDate: new Date('2020-06-01'),
-          },
-        ],
-      },
-      workExperiences: {
-        create: [
-          {
-            company: 'Gitlab',
-            position: 'Data Scientist',
-            description: 'Analyzed data sets',
-            startDate: new Date('2020-07-01'),
-            endDate: new Date('2022-08-01'),
-          },
-        ],
-      },
-      resumes: {
-        create: [
-          {
-            filePath: '/resumes/jane_smith.pdf',
-            fileType: 'application/pdf',
-            uploadDate: new Date(),
-          },
-        ],
-      },
-    },
-  });
-
-  const candidate3 = await prisma.candidate.create({
-    data: {
-      firstName: 'Carlos',
+      firstName: 'María',
       lastName: 'García',
-      email: 'carlos.garcia@example.com',
-      phone: '1122334455',
-      address: '789 Pine St',
-      educations: {
-        create: [
-          {
-            institution: 'Instituto Tecnológico',
-            title: 'Ingeniería en Sistemas Computacionales',
-            startDate: new Date('2017-01-01'),
-            endDate: new Date('2021-12-01'),
-          },
-        ],
-      },
-      workExperiences: {
-        create: [
-          {
-            company: 'Innovaciones Tech',
-            position: 'Ingeniero de Software',
-            description: 'Desarrollo y mantenimiento de aplicaciones de software',
-            startDate: new Date('2022-01-01'),
-            endDate: new Date('2023-01-01'),
-          },
-        ],
-      },
-      resumes: {
-        create: [
-          {
-            filePath: '/resumes/carlos_garcia.pdf',
-            fileType: 'application/pdf',
-            uploadDate: new Date(),
-          },
-        ],
-      },
+      email: 'maria.garcia@email.com',
+      phone: '0987654321',
+      address: 'Avenida Central 456',
     },
   });
 
-  // Create Interview Types
-  const interviewType1 = await prisma.interviewType.create({
-    data: {
-      name: 'HR Interview',
-      description: 'Assess overall fit, tech stack, salary range and availability',
-    },
-  });
-
-  const interviewType2 = await prisma.interviewType.create({
-    data: {
-      name: 'Technical Interview',
-      description: 'Assess technical skills',
-    },
-  });
-
-  const interviewType3 = await prisma.interviewType.create({
-    data: {
-      name: 'Hiring manager interview',
-      description: 'Assess cultural fit and professional goals',
-    },
-  });
-
-  
-
-  // Create Interview Steps
-  const interviewStep1 = await prisma.interviewStep.create({
-    data: {
-      interviewFlowId: interviewFlow1.id,
-      interviewTypeId: interviewType1.id,
-      name: 'Initial Screening',
-      orderIndex: 1,
-    },
-  });
-
-  const interviewStep2 = await prisma.interviewStep.create({
-    data: {
-      interviewFlowId: interviewFlow1.id,
-      interviewTypeId: interviewType2.id,
-      name: 'Technical Interview',
-      orderIndex: 2,
-    },
-  });
-
-  const interviewStep3 = await prisma.interviewStep.create({
-    data: {
-      interviewFlowId: interviewFlow1.id,
-      interviewTypeId: interviewType3.id,
-      name: 'Manager Interview',
-      orderIndex: 2,
-    },
-  });
-
-  // Create Employees
-  const employee1 = await prisma.employee.create({
-    data: {
-      companyId: company1.id,
-      name: 'Alice Johnson',
-      email: 'alice.johnson@lti.com',
-      role: 'Interviewer',
-    },
-  });
-
-  const employee2 = await prisma.employee.create({
-    data: {
-      companyId: company1.id,
-      name: 'Bob Miller',
-      email: 'bob.miller@lti.com',
-      role: 'Hiring Manager',
-    },
-  });
-
-  // Create Applications
+  // Crear aplicaciones
   const application1 = await prisma.application.create({
     data: {
-      positionId: position1.id,
+      positionId: position.id,
       candidateId: candidate1.id,
       applicationDate: new Date(),
-      currentInterviewStep: interviewStep2.id,
+      currentInterviewStep: technicalStep.id,
+      notes: 'Candidato prometedor',
     },
   });
 
   const application2 = await prisma.application.create({
     data: {
-      positionId: position2.id,
-      candidateId: candidate1.id,
-      applicationDate: new Date(),
-      currentInterviewStep: interviewStep2.id,
-    },
-  });
-
-  const application3 = await prisma.application.create({
-    data: {
-      positionId: position1.id,
+      positionId: position.id,
       candidateId: candidate2.id,
       applicationDate: new Date(),
-      currentInterviewStep: interviewStep2.id,
+      currentInterviewStep: hrStep.id,
+      notes: 'Buen perfil',
     },
   });
 
-  const application4 = await prisma.application.create({
+  // Crear entrevistas
+  await prisma.interview.create({
     data: {
-      positionId: position1.id,
-      candidateId: candidate3.id,
-      applicationDate: new Date(),
-      currentInterviewStep: interviewStep1.id,
+      applicationId: application1.id,
+      interviewStepId: technicalStep.id,
+      employeeId: employee.id,
+      interviewDate: new Date(),
+      result: 'Aprobado',
+      score: 85,
+      notes: 'Buen desempeño técnico',
     },
   });
 
-
-  // Create Interviews
-  await prisma.interview.createMany({
-    data: [
-      {
-        applicationId: application1.id,
-        interviewStepId: interviewStep1.id,
-        employeeId: employee1.id,
-        interviewDate: new Date(),
-        result: 'Passed',
-        score: 5,
-        notes: 'Good technical skills',
-      },
-      {
-        applicationId: application2.id,
-        interviewStepId: interviewStep1.id,
-        employeeId: employee1.id,
-        interviewDate: new Date(),
-        result: 'Passed',
-        score: 5,
-        notes: 'Excellent data analysis skills',
-      },
-      {
-        applicationId: application3.id,
-        interviewStepId: interviewStep1.id,
-        employeeId: employee1.id,
-        interviewDate: new Date(),
-        result: 'Passed',
-        score: 4,
-        notes: 'Good technical skills',
-      }
-    ],
+  await prisma.interview.create({
+    data: {
+      applicationId: application2.id,
+      interviewStepId: technicalStep.id,
+      employeeId: employee.id,
+      interviewDate: new Date(),
+      result: 'Aprobado',
+      score: 90,
+      notes: 'Excelente desempeño técnico',
+    },
   });
+
+  console.log('Datos de prueba creados exitosamente');
 }
 
 main()
